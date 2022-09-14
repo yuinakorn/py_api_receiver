@@ -56,7 +56,10 @@ async def api(request: Request, api_name: str):
         # replace "None" to NULL
         values_str = values_str.replace('\"None\"', 'NULL')
 
-        sql = "INSERT INTO " + table_name + " (" + headers_str + ") VALUES (" + values_str + ");"
+        if method == "replace":
+            sql = "REPLACE INTO " + table_name + " (" + headers_str + ") VALUES (" + values_str + ");"
+        else:
+            sql = "INSERT INTO " + table_name + " (" + headers_str + ") VALUES (" + values_str + ");"
 
         i += 1
 

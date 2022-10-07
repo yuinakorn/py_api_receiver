@@ -1,14 +1,7 @@
-from fastapi import FastAPI, Request, status, HTTPException, Depends
+from fastapi import FastAPI, Request, status, HTTPException
 from dotenv import dotenv_values
-from sqlalchemy.orm import Session
-
-from database import get_connection, Base, SessionLocal
-from pydantic import BaseModel
+from database import get_connection
 import time
-import json
-import requests
-
-from sqlalchemy import Column, String, Integer
 
 config_env = dotenv_values(".env")
 
@@ -17,35 +10,13 @@ app = FastAPI()
 api_url = config_env["API_URL"]
 
 
-class Params(Base):
-    __tablename__ = "json_params"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    params = Column(String)
-
-
-class Hcode(Base):
-    __tablename__ = "json_hoscode"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    hoscode = Column(String)
-
-
-def get_db():
-    try:
-        db = SessionLocal()
-        yield db
-    finally:
-        db.close()
-
-
 @app.get("/")
 async def root():
-    return {"message": "Hello API Test"}
+    return {"message": "Hello API"}
 
 
 @app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Create"])
-async def api(request: Request, api_name: str):  # api_name is parameter to select database
+async def api(request: Request, api_name: str):
     json_data = await request.json()
     i = 0
     hoscode = str(json_data["hcode"])
@@ -118,60 +89,3 @@ async def api(request: Request, api_name: str):  # api_name is parameter to sele
     connection.close()
 
     return {"detail": "Insert " + str(i) + " rows into " + hoscode + " success"}
-
-
-@app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["Call API"])
-async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
-    global hoscode_list, table_name, params_list
-    wait_result = request.query_params.get("wait_result")
-    method = request.query_params.get("method")
-
-    # if not visit date, set default to current date
-    if request.query_params.get("vstdate") is None:
-        vstdate = time.strftime("%Y-%m-%d", time.localtime())
-
-    # vstdate = request.query_params.get("vstdate")
-
-    config_api = {
-        "api_name": params,
-        "wait_result": wait_result,
-        "method": method,
-        "vstdate": vstdate
-    }
-
-    params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
-    hoscode_data = json.loads(db.query(Hcode).filter(Hcode.name == hosgroup).first().hoscode)
-
-    for i in params_data:
-        params_list = i['params']
-        print(params_list)
-
-    for i in hoscode_data:
-        hoscode_list = i['hos_code']
-        print(hoscode_list)
-
-    for i in params_list:  # loop table
-        table_name = i
-        for j in hoscode_list:  # loop hospital
-            hoscode = j
-
-            print(table_name)
-
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-                  config_api["api_name"] + "&method=" + config_api["method"] + "&vstdate=" + config_api["vstdate"]
-
-            print(url)
-
-            payload = {}
-            headers = {}
-
-            response = requests.request("GET", url, headers=headers, data=payload)
-
-            status_code = response.status_code
-
-            json_arr = response.json()
-            print(json_arr)
-
-        time.sleep(5)  # delay 10 seconds
-
-    return {"detail": "Call API Success"}

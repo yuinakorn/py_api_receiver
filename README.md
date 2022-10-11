@@ -11,7 +11,7 @@ uvicorn main:app --reload
 
 # Usage with Caller
 
-API caller จะเป็นผู้ร้องขอข้อมูลจาก client sender 
+รัน API Caller เพื่อเรียกใช้ API Client จาก Raspberry Pi
 
-API client sender จะเป็นผู้ส่งข้อมูลมาให้ API receiver ตามโปรโตคอลที่กำหนด
+ตัว Receiver จะรอรับข้อมูลจาก Client 
 

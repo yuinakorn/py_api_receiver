@@ -170,7 +170,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             status_code = response.status_code
 
             json_arr = response.json()
-            print(json_arr)
+            # print(json_arr)
 
         time.sleep(5)  # delay 10 seconds
 

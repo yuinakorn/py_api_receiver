@@ -15,3 +15,9 @@ uvicorn main:app --reload
 
 ตัว Receiver จะรอรับข้อมูลจาก Client 
 
+# ตัวอย่างการใช้งาน
+
+```http request
+http://localhost:8000/callapi/{params}/{กลุ่ม รพ.}?wait_result=no&method={replace}|{deleteinsert}
+```
+

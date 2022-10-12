@@ -127,16 +127,15 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     method = request.query_params.get("method")
 
     # if not visit date, set default to current date
-    if request.query_params.get("vstdate") is None:
-        vstdate = time.strftime("%Y-%m-%d", time.localtime())
+    # if request.query_params.get("vstdate") is None:
+    #     vstdate = time.strftime("%Y-%m-%d", time.localtime())
 
     # vstdate = request.query_params.get("vstdate")
 
     config_api = {
         "api_name": params,
         "wait_result": wait_result,
-        "method": method,
-        "vstdate": vstdate
+        "method": method
     }
 
     params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
@@ -158,7 +157,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             print(table_name)
 
             url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-                  config_api["api_name"] + "&method=" + config_api["method"] + "&vstdate=" + config_api["vstdate"]
+                  config_api["api_name"] + "&method=" + config_api["method"]
 
             print(url)
 
@@ -167,11 +166,11 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 
             response = requests.request("GET", url, headers=headers, data=payload)
 
-            status_code = response.status_code
+            # status_code = response.status_code
 
-            json_arr = response.json()
+            # json_arr = response.json()
             # print(json_arr)
 
-        time.sleep(5)  # delay 10 seconds
+        time.sleep(5)  # delay 5 seconds
 
-    return {"detail": "Call API Success"}
+    return {"detail": f"Call API {config_api['api_name']} Success"}

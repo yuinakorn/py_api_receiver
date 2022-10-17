@@ -44,6 +44,7 @@ async def root():
     return {"message": "Hello API Test"}
 
 
+# api receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Create"])
 async def api(request: Request, api_name: str):  # api_name is parameter to select database
     json_data = await request.json()
@@ -117,9 +118,22 @@ async def api(request: Request, api_name: str):  # api_name is parameter to sele
 
     connection.close()
 
+    url = "https://notify-api.line.me/api/notify"
+
+    message = "API " + api_name + " end process"
+
+    payload = f'message={message}'
+    headers = {
+        'Authorization': 'Bearer ' + config_env["LINE_TOKEN"],
+        'Content-Type': 'application/x-www-form-urlencoded'
+    }
+
+    requests.request("POST", url, headers=headers, data=payload)
+
     return {"detail": "Insert " + str(i) + " rows into " + hoscode + " success"}
 
 
+# api caller # ตัวเรียกข้อมูล
 @app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["Call API"])
 async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list

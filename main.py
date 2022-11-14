@@ -118,17 +118,17 @@ async def api(request: Request, api_name: str):  # api_name is parameter to sele
 
     connection.close()
 
-    url = "https://notify-api.line.me/api/notify"
+    # url = "https://notify-api.line.me/api/notify"
+    #
+    # message = "API " + api_name + " end process"
 
-    message = "API " + api_name + " end process"
-
-    payload = f'message={message}'
-    headers = {
-        'Authorization': 'Bearer ' + config_env["LINE_TOKEN"],
-        'Content-Type': 'application/x-www-form-urlencoded'
-    }
-
-    requests.request("POST", url, headers=headers, data=payload)
+    # payload = f'message={message}'
+    # headers = {
+    #     'Authorization': 'Bearer ' + config_env["LINE_TOKEN"],
+    #     'Content-Type': 'application/x-www-form-urlencoded'
+    # }
+    #
+    # requests.request("POST", url, headers=headers, data=payload)
 
     return {"detail": "Insert " + str(i) + " rows into " + hoscode + " success"}
 

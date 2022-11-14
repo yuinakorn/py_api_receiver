@@ -6,3 +6,4 @@ test*.py
 database.py
 log.txt
 __pycache__/
+env

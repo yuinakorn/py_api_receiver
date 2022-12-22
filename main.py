@@ -52,6 +52,8 @@ async def api(request: Request, api_name: str):  # api_name is parameter to sele
         url = "https://smog-epinorth.chiangmaihealth.go.th/web/index.php?r=upload/json"
 
         json_data = await request.json()
+        print(url)
+        print(json_data)
 
         payload = json.dumps(json_data)
         headers = {

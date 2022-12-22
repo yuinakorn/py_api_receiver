@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Request, status, HTTPException, Depends, Body
 from dotenv import dotenv_values
 from sqlalchemy.orm import Session
-from starlette.middleware.cors import CORSMiddleware
+# from starlette.middleware.cors import CORSMiddleware
 
 from database import get_connection, Base, SessionLocal
-from pydantic import BaseModel
+# from pydantic import BaseModel
 import time
 import json
 import requests
@@ -16,13 +16,13 @@ config_env = dotenv_values(".env")
 
 app = FastAPI()
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 api_url = config_env["API_URL"]
 
@@ -56,7 +56,7 @@ async def root():
 
 # api receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver"])  # api_name is parameter select database
-async def api(api_name: str, request: Request):  # default max_size is 100MB.
+async def api(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
     print("api_name" + api_name)
     if api_name == "send_smog_r1":

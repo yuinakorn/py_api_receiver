@@ -10,8 +10,6 @@ import requests
 
 from sqlalchemy import Column, String, Integer
 
-# from fastapi.body import Body
-
 config_env = dotenv_values(".env")
 
 app = FastAPI()
@@ -48,7 +46,7 @@ async def root():
 
 # api receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver"])  # api_name is parameter select database
-async def api(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
+async def api(api_name: str, request: Request = Body(max_size=100000000)):  # default max_size is 100MB.
     # test api r1
     print("api_name" + api_name)
     if api_name == "send_smog_r1":

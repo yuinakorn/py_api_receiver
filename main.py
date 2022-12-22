@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, status, HTTPException, Depends
+from fastapi import FastAPI, Request, status, HTTPException, Depends, Body
 from dotenv import dotenv_values
 from sqlalchemy.orm import Session
 
@@ -9,6 +9,8 @@ import json
 import requests
 
 from sqlalchemy import Column, String, Integer
+
+# from fastapi.body import Body
 
 config_env = dotenv_values(".env")
 
@@ -46,10 +48,11 @@ async def root():
 
 # api receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver"])
-async def api(request: Request, api_name: str):  # api_name is parameter to select database
+# def create_item(item: dict = Body(..., max_size=5000000)):
+#     return {"item_id": item["id"]}
+async def api(api_name: str, request: Request = Body(..., max_size=5000000)):  # api_name is parameter select database
     # test api r1
-    print(api_name)
-    print("hello")
+    print("api_name" + api_name)
     if api_name == "send_smog_r1":
         url = "https://smog-epinorth.chiangmaihealth.go.th/web/index.php?r=upload/json"
 

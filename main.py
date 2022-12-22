@@ -21,7 +21,9 @@ app.add_middleware(
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    max_size=200000000,  # 200M
 )
+
 
 api_url = config_env["API_URL"]
 
@@ -55,7 +57,7 @@ async def root():
 
 # api receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver"])  # api_name is parameter select database
-async def api(api_name: str, request: Request = Body(..., max_size=20000000)):  # default max_size is 100MB.
+async def api(api_name: str, request: Request = Body(..., max_size=200000000)):  # default max_size is 100MB.
     # test api r1
     print("api_name" + api_name)
     if api_name == "send_smog_r1":

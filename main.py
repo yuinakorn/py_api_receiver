@@ -47,6 +47,23 @@ async def root():
 # api receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Create"])
 async def api(request: Request, api_name: str):  # api_name is parameter to select database
+    # test api r1
+    if api_name == "smog_r1":
+        url = "https://smog-epinorth.chiangmaihealth.go.th/web/index.php?r=upload/json"
+
+        json_data = await request.json()
+
+        payload = json.dumps(json_data)
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        response = requests.request("POST", url, headers=headers, data=payload)
+
+        return {"message": response}
+    # end test api r1
+
+
+
     json_data = await request.json()
     i = 0
     hoscode = str(json_data["hcode"])
@@ -188,3 +205,22 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
         time.sleep(5)  # delay 5 seconds
 
     return {"detail": f"Call API {config_api['api_name']} Success"}
+
+
+@app.post("/checkapi/{hoscode}/{cid}", status_code=status.HTTP_200_OK, tags=["Check API"])
+async def check_api(request: Request, api_name: str, hoscode: str, cid: str, db: Session = Depends(get_db)):
+    connection = get_connection(api_name)
+    sql = "INSERT INTO check_api (hoscode, cid) VALUES (%s, %s);"
+    try:
+        with connection.cursor() as cursor:
+            # cursor.execute(sql)
+            cursor.execute(sql)
+            connection.commit()  # commit the changes
+    except Exception as e:
+        print(f'This is error: {e}')
+        error = str(e)
+        connection.rollback()  # rollback if any exception occurred (optional)
+        # write log to file
+        with open('log.txt', 'a') as f:
+            current_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            f.write(f'{current_date} {error} \n')

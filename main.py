@@ -47,10 +47,8 @@ async def root():
 
 
 # api receiver # ตัวนำเข้าข้อมูล
-@app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver"])
-# def create_item(item: dict = Body(..., max_size=5000000)):
-#     return {"item_id": item["id"]}
-async def api(api_name: str, request: Request = Body(..., max_size=5000000)):  # api_name is parameter select database
+@app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver"])  # api_name is parameter select database
+async def api(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
     print("api_name" + api_name)
     if api_name == "send_smog_r1":

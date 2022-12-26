@@ -50,12 +50,12 @@ def get_db():
 
 @app.get("/")
 async def root():
-    return {"message": "Hello API Test"}
+    return {"message": "Hello API"}
 
 
 # api receiver # ตัวนำเข้าข้อมูล
-@app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver and Caller API"])  # api_name is parameter select database
-async def api(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
+@app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["receiver and caller API"])  # api_name is parameter select database
+async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
     print("api_name" + api_name)
     if api_name == "send_smog_r1":
@@ -162,7 +162,7 @@ async def api(api_name: str, request: Request = Body(..., max_size=100000000)): 
 
 
 # api caller # ตัวเรียกข้อมูล
-@app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["Receiver and Caller API"])
+@app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["receiver and caller API"])
 async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
@@ -218,8 +218,8 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     return {"detail": f"Call API {config_api['api_name']} Success"}
 
 
-@app.post("/telelog/", status_code=status.HTTP_200_OK, tags=["Tele-Medicine log"])
-async def check_api(request: Request, jwt_str: str):
+@app.post("/telelog/", status_code=status.HTTP_200_OK, tags=["tele-medicine log"])
+async def telelog(request: Request, jwt_str: str):
     jwt_decode = jwt.decode(jwt_str, config_env["JWT_SECRET"], algorithms=["HS256"])
     hoscode = "'" + str(jwt_decode["hosCode"]) + "'"
     username = "'" + jwt_decode["username"] + "'"

@@ -54,7 +54,7 @@ async def root():
 
 
 # api receiver # ตัวนำเข้าข้อมูล
-@app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver"])  # api_name is parameter select database
+@app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["Receiver and Caller API"])  # api_name is parameter select database
 async def api(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
     print("api_name" + api_name)
@@ -162,7 +162,7 @@ async def api(api_name: str, request: Request = Body(..., max_size=100000000)): 
 
 
 # api caller # ตัวเรียกข้อมูล
-@app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["Call API"])
+@app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["Receiver and Caller API"])
 async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")

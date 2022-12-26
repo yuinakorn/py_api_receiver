@@ -219,12 +219,9 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 
 
 
-def get_client_ip(request: Request):
-    return request.client.host
-
 
 @app.post("/telelog/", status_code=status.HTTP_200_OK, tags=["tele-medicine log"])
-async def telelog(request: Request, jwt_str: str, client_ip: str = Depends(get_client_ip)):
+async def telelog(request: Request, jwt_str: str, ip: str):
     jwt_decode = jwt.decode(jwt_str, config_env["JWT_SECRET"], algorithms=["HS256"])
     hoscode = "'" + str(jwt_decode["hosCode"]) + "'"
     username = "'" + jwt_decode["username"] + "'"
@@ -233,20 +230,20 @@ async def telelog(request: Request, jwt_str: str, client_ip: str = Depends(get_c
     now = datetime.now()
     date_time = now.strftime("%Y-%m-%d %H:%M:%S")
     date_time = "'" + str(date_time) + "'"
-    ip = "'" + str(client_ip) + "'"
+    ip_client = "'" + str(ip) + "'"
     connection = get_connection('telelog')
 
     try:
         with connection.cursor() as cursor:
             sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele, client_ip) VALUES (%s, %s, %s, %s, CONCAT(CURRENT_DATE,' ',CURRENT_TIME), %s)" % (
-                hoscode, username, doctor_cid, patient_cid, ip)
+                hoscode, username, doctor_cid, patient_cid, ip_client)
             print(sql)
             cursor.execute(sql)
             connection.commit()  # commit the changes
         return {
             "status": "ok",
             "detail": f"Insert tele-log success {now}",
-            "client ip": client_ip
+            "client ip": ip
         }
 
     except Exception as e:
@@ -254,5 +251,5 @@ async def telelog(request: Request, jwt_str: str, client_ip: str = Depends(get_c
         return {
             "status": "fail",
             "detail": str(e),
-            "client ip": client_ip
+            "client ip": ip
         }

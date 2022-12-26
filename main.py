@@ -2,15 +2,14 @@ from fastapi import FastAPI, Request, status, HTTPException, Depends, Body
 from dotenv import dotenv_values
 from sqlalchemy.orm import Session
 # from starlette.middleware.cors import CORSMiddleware
-
+from sqlalchemy import Column, String, Integer
 from database import get_connection, Base, SessionLocal
 # from pydantic import BaseModel
 import time
 import json
 import requests
-
-from sqlalchemy import Column, String, Integer
-
+import jwt
+from datetime import datetime
 
 config_env = dotenv_values(".env")
 
@@ -60,7 +59,7 @@ async def api(api_name: str, request: Request = Body(..., max_size=100000000)): 
     # test api r1
     print("api_name" + api_name)
     if api_name == "send_smog_r1":
-        url = "https://smog-epinorth.chiangmaihealth.go.th/web/index.php?r=upload/json"
+        url = config_env["SMOG_R1_URL"]
 
         json_data = await request.json()
         print(url)
@@ -219,20 +218,33 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     return {"detail": f"Call API {config_api['api_name']} Success"}
 
 
-@app.post("/checkapi/{hoscode}/{cid}", status_code=status.HTTP_200_OK, tags=["Check API"])
-async def check_api(request: Request, api_name: str, hoscode: str, cid: str, db: Session = Depends(get_db)):
-    connection = get_connection(api_name)
-    sql = "INSERT INTO check_api (hoscode, cid) VALUES (%s, %s);"
+@app.post("/telelog/", status_code=status.HTTP_200_OK, tags=["Tele-Medicine log"])
+async def check_api(request: Request, jwt_str: str):
+    jwt_decode = jwt.decode(jwt_str, config_env["JWT_SECRET"], algorithms=["HS256"])
+    hoscode = "'" + str(jwt_decode["hosCode"]) + "'"
+    username = "'" + jwt_decode["username"] + "'"
+    doctor_cid = "'" + str(jwt_decode["cid"]) + "'"
+    patient_cid = "'" + str(jwt_decode["patientCid"]) + "'"
+    now = datetime.now()
+    date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+    date_time = "'" + str(date_time) + "'"
+    connection = get_connection('telelog')
+
     try:
         with connection.cursor() as cursor:
-            # cursor.execute(sql)
+            sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele) VALUES (%s, %s, %s, %s, %s)" % (
+                hoscode, username, doctor_cid, patient_cid, date_time)
+            print(sql)
             cursor.execute(sql)
             connection.commit()  # commit the changes
+        return {
+            "status": "ok",
+            "detail": f"Insert tele-log success {now}"
+        }
+
     except Exception as e:
         print(f'This is error: {e}')
-        error = str(e)
-        connection.rollback()  # rollback if any exception occurred (optional)
-        # write log to file
-        with open('log.txt', 'a') as f:
-            current_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            f.write(f'{current_date} {error} \n')
+        return {
+            "status": "fail",
+            "detail": str(e)
+        }

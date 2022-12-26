@@ -232,8 +232,8 @@ async def telelog(request: Request, jwt_str: str):
 
     try:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele) VALUES (%s, %s, %s, %s, %s)" % (
-                hoscode, username, doctor_cid, patient_cid, date_time)
+            sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele) VALUES (%s, %s, %s, %s, CONCAT(CURRENT_DATE,' ',CURRENT_TIME))" % (
+                hoscode, username, doctor_cid, patient_cid)
             print(sql)
             cursor.execute(sql)
             connection.commit()  # commit the changes

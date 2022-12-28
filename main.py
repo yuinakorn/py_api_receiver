@@ -54,7 +54,8 @@ async def root():
 
 
 # api receiver # ตัวนำเข้าข้อมูล
-@app.post("/{api_name}", status_code=status.HTTP_200_OK, tags=["receiver and caller API"])  # api_name is parameter select database
+@app.post("/{api_name}", status_code=status.HTTP_200_OK,
+          tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
     print("api_name" + api_name)
@@ -213,11 +214,9 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             # json_arr = response.json()
             # print(json_arr)
 
-        time.sleep(5)  # delay 5 seconds
+        time.sleep(3)  # delay 3 seconds
 
     return {"detail": f"Call API {config_api['api_name']} Success"}
-
-
 
 
 @app.post("/telelog/", status_code=status.HTTP_200_OK, tags=["tele-medicine log"])
@@ -235,7 +234,8 @@ async def telelog(request: Request, jwt_str: str, ip: str):
 
     try:
         with connection.cursor() as cursor:
-            sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele, client_ip) VALUES (%s, %s, %s, %s, CONCAT(CURRENT_DATE,' ',CURRENT_TIME), %s)" % (
+            sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele, client_ip) VALUES " \
+                  "(%s, %s, %s, %s, CONCAT(CURRENT_DATE,' ',CURRENT_TIME), %s)" % (
                 hoscode, username, doctor_cid, patient_cid, ip_client)
             print(sql)
             cursor.execute(sql)
@@ -252,4 +252,24 @@ async def telelog(request: Request, jwt_str: str, ip: str):
             "status": "fail",
             "detail": str(e),
             "client ip": ip
+        }
+
+
+@app.post("/client/status/", status_code=status.HTTP_200_OK, tags=["client status"])
+async def client_status(request: Request):
+    connection = get_connection('telelog')
+    data = await request.json()
+
+    data_header = request.headers
+    if config_env["CHECK_API_TOKEN"] == data_header['api_key']:
+        return {
+            "status": "ok",
+            "detail": data["message"],
+            "token": data_header['api_key']
+        }
+    else:
+        return {
+            "status": "fail",
+            "detail": "invalid api_key",
+            "token": data_header['api_key']
         }

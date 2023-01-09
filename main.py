@@ -10,6 +10,7 @@ import json
 import requests
 import jwt
 from datetime import datetime
+import threading
 
 config_env = dotenv_values(".env")
 
@@ -75,7 +76,13 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         return {"message": response}
     # end test api r1
 
+    elif api_name == "test":
+        data = await request.json()
+        print(data)
+
+
     else:
+        print("ok work")
         json_data = await request.json()
         i = 0
         hoscode = str(json_data["hcode"])
@@ -118,11 +125,13 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
                 # sql = "REPLACE INTO " + table_name + " (" + headers_str + ") VALUES (" + values_str + ");"
                 columns = ', '.join("`" + str(x).replace('/', '_') + "`" for x in dictionary.keys())
                 values_str = ', '.join("'" + str(x).replace('/', '_') + "'" for x in dictionary.values())
-                values = values_str.replace('\"None\"', 'NULL')
+                values = values_str.replace('\"None\"', 'NULL')  # replace "None" to NULL
+                print(values)
                 sql = "REPLACE INTO %s (%s) VALUES (%s);" % (table_name, columns, values)
                 print(sql)
             else:
                 sql = "INSERT INTO " + table_name + " (" + headers_str + ") VALUES (" + values_str + ");"
+                print(sql)
 
             i += 1
 
@@ -169,12 +178,6 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     wait_result = request.query_params.get("wait_result")
     method = request.query_params.get("method")
 
-    # if not visit date, set default to current date
-    # if request.query_params.get("vstdate") is None:
-    #     vstdate = time.strftime("%Y-%m-%d", time.localtime())
-
-    # vstdate = request.query_params.get("vstdate")
-
     config_api = {
         "api_name": params,
         "wait_result": wait_result,
@@ -207,14 +210,14 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             payload = {}
             headers = {}
 
-            response = requests.request("GET", url, headers=headers, data=payload)
+            requests.request("GET", url, headers=headers, data=payload)
 
             # status_code = response.status_code
 
             # json_arr = response.json()
             # print(json_arr)
 
-        time.sleep(3)  # delay 3 seconds
+        # time.sleep(3)  # delay 3 seconds
 
     return {"detail": f"Call API {config_api['api_name']} Success"}
 
@@ -236,7 +239,7 @@ async def telelog(request: Request, jwt_str: str, ip: str):
         with connection.cursor() as cursor:
             sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele, client_ip) VALUES " \
                   "(%s, %s, %s, %s, CONCAT(CURRENT_DATE,' ',CURRENT_TIME), %s)" % (
-                hoscode, username, doctor_cid, patient_cid, ip_client)
+                      hoscode, username, doctor_cid, patient_cid, ip_client)
             print(sql)
             cursor.execute(sql)
             connection.commit()  # commit the changes
@@ -273,3 +276,61 @@ async def client_status(request: Request):
             "detail": "invalid api_key",
             "token": data_header['api_key']
         }
+
+
+def make_request(url):
+    response = requests.post(url)
+    print(response.text)
+
+
+@app.post("/onecall/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["Custom API"])
+async def one_call(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
+    global hoscode_list, table_name, params_list, urls
+    wait_result = request.query_params.get("wait_result")
+    method = request.query_params.get("method")
+
+    config_api = {
+        "api_name": params,
+        "wait_result": wait_result,
+        "method": method
+    }
+
+    params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
+    hoscode_data = json.loads(db.query(Hcode).filter(Hcode.name == hosgroup).first().hoscode)
+
+    for i in params_data:
+        params_list = i['params']
+        print(params_list)
+
+    for i in hoscode_data:
+        hoscode_list = i['hos_code']
+        print(hoscode_list)
+
+    for i in params_list:  # loop table
+        table_name = i
+        for j in hoscode_list:  # loop hospital
+            hoscode = j
+
+            print(table_name)
+
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+                  config_api["api_name"] + "&method=" + config_api["method"]
+
+            print(url)
+
+            urls = [url]
+
+    # Create a thread for each URL
+    threads = [threading.Thread(target=make_request, args=(url,)) for url in urls]
+
+    # Start all threads
+    for thread in threads:
+        thread.start()
+
+    # Wait for all threads to complete
+    for thread in threads:
+        thread.join()
+
+    print("All requests completed")
+
+    return {"detail": f"Call API {config_api['api_name']} Success"}

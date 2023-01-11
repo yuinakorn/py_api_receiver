@@ -213,7 +213,6 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             requests.request("GET", url, headers=headers, data=payload)
 
             # status_code = response.status_code
-
             # json_arr = response.json()
             # print(json_arr)
 

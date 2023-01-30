@@ -201,7 +201,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             hoscode = j
 
             print(table_name)
-            # new round
+            # new round coming soon
             url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
                   config_api["api_name"] + "&method=" + config_api["method"]
 

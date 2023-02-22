@@ -176,7 +176,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
     method = request.query_params.get("method")
-    rounds = request.query_params.get("round")
+    rounds = request.query_params.get("rounds")
 
     config_api = {
         "api_name": params,

@@ -182,8 +182,8 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     # rounds = datetime.now().strftime("%H")
 
     tz = pytz.timezone('Asia/Bangkok')
-    rounds = datetime.now(tz).hour
-    print(rounds)
+    rounds = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
+    print("rounds = " + str(rounds))
     # rounds = ''
 
     config_api = {
@@ -211,7 +211,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             print(table_name)
 
             url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-                  config_api["api_name"] + "&method=" + config_api["method"]
+                  config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + str(rounds)
 
             print(url)
 

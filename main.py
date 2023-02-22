@@ -176,13 +176,14 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
     method = request.query_params.get("method")
-    rounds = request.query_params.get("rounds")
+    # rounds = request.query_params.get("rounds")
+
+    rounds = datetime.now().strftime("%H")
 
     config_api = {
         "api_name": params,
         "wait_result": wait_result,
-        "method": method,
-        "rounds": rounds
+        "method": method
     }
 
     params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
@@ -204,7 +205,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             print(table_name)
 
             url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-                  config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + config_api["rounds"]
+                  config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + rounds
 
             print(url)
 

@@ -10,6 +10,7 @@ import json
 import requests
 import jwt
 from datetime import datetime
+import pytz
 import threading
 
 config_env = dotenv_values(".env")
@@ -178,7 +179,10 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     method = request.query_params.get("method")
     # rounds = request.query_params.get("rounds")
 
-    rounds = datetime.now().strftime("%H")
+    # rounds = datetime.now().strftime("%H")
+
+    tz = pytz.timezone('Asia/Bangkok')
+    rounds = datetime.now(tz).hour
 
     config_api = {
         "api_name": params,

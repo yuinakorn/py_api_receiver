@@ -51,7 +51,7 @@ def get_db():
 
 @app.get("/")
 async def root():
-    return {"message": "Hello API"}
+    return {"detail": "Hello"}
 
 
 # api receiver # ตัวนำเข้าข้อมูล
@@ -80,9 +80,8 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         data = await request.json()
         print(data)
 
-
     else:
-        print("ok work")
+        # print("ok work")
         json_data = await request.json()
         i = 0
         hoscode = str(json_data["hcode"])
@@ -177,11 +176,13 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
     method = request.query_params.get("method")
+    rounds = request.query_params.get("round")
 
     config_api = {
         "api_name": params,
         "wait_result": wait_result,
-        "method": method
+        "method": method,
+        "round": rounds
     }
 
     params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
@@ -203,7 +204,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             print(table_name)
             # new round coming soon
             url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-                  config_api["api_name"] + "&method=" + config_api["method"]
+                  config_api["api_name"] + "&method=" + config_api["method"] + "&round=" + config_api["round"]
 
             print(url)
 

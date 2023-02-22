@@ -182,7 +182,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
         "api_name": params,
         "wait_result": wait_result,
         "method": method,
-        "round": rounds
+        "rounds": rounds
     }
 
     params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
@@ -202,9 +202,9 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             hoscode = j
 
             print(table_name)
-            # new round coming soon
+
             url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-                  config_api["api_name"] + "&method=" + config_api["method"] + "&round=" + config_api["round"]
+                  config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + config_api["rounds"]
 
             print(url)
 

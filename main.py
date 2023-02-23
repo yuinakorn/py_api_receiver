@@ -12,6 +12,7 @@ import jwt
 from datetime import datetime
 import pytz
 import threading
+from controllers import receiver_controller
 
 config_env = dotenv_values(".env")
 
@@ -82,7 +83,6 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         print(data)
 
     else:
-        # print("ok work")
         json_data = await request.json()
         i = 0
         hoscode = str(json_data["hcode"])
@@ -156,18 +156,6 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
 
         connection.close()
 
-        # url = "https://notify-api.line.me/api/notify"
-        #
-        # message = "API " + api_name + " end process"
-
-        # payload = f'message={message}'
-        # headers = {
-        #     'Authorization': 'Bearer ' + config_env["LINE_TOKEN"],
-        #     'Content-Type': 'application/x-www-form-urlencoded'
-        # }
-        #
-        # requests.request("POST", url, headers=headers, data=payload)
-
         return {"detail": "Insert " + str(i) + " rows into " + hoscode + " success"}
 
 
@@ -177,14 +165,10 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
     method = request.query_params.get("method")
-    # rounds = request.query_params.get("rounds")
-
-    # rounds = datetime.now().strftime("%H")
 
     tz = pytz.timezone('Asia/Bangkok')
     rounds = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     print("rounds = " + str(rounds))
-    # rounds = ''
 
     config_api = {
         "api_name": params,
@@ -341,3 +325,8 @@ async def one_call(request: Request, params: str, hosgroup: str, db: Session = D
     print("All requests completed")
 
     return {"detail": f"Call API {config_api['api_name']} Success"}
+
+
+@app.post("/api_nkp/{table}/{api_id}", status_code=status.HTTP_200_OK, tags=["Custom API"])
+def get_bed(table: str, api_id: int, db: Session = Depends(get_db)):
+    return receiver_controller.get_bed(table, api_id, db)

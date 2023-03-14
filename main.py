@@ -61,7 +61,7 @@ async def root():
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
-    print("api_name" + api_name)
+    print("api_name: " + api_name)
     if api_name == "send_smog_r1":
         url = config_env["SMOG_R1_URL"]
 
@@ -77,6 +77,13 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
 
         return {"message": response}
     # end test api r1
+
+    # start catscore NCD
+    if api_name == "catscore":
+        json_data = await request.json()
+        print(json_data)
+
+        # end catscore NCD
 
     elif api_name == "test":
         data = await request.json()

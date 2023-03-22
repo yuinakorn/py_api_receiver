@@ -133,9 +133,8 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
                 columns = ', '.join("`" + str(x).replace('/', '_') + "`" for x in dictionary.keys())
                 values_str = ', '.join("'" + str(x).replace('/', '_') + "'" for x in dictionary.values())
 
-                values = [tuple([None if x is None else x for x in v]) for v in values_str]
+                values = values_str.replace('\"None\"', "")  # replace "None" to NULL
 
-                # values = values_str.replace('\"None\"', "")  # replace "None" to NULL
                 # values = values_str.replace("\'None\'", '')  # replace "None" to NULL
 
                 print(values)

@@ -132,7 +132,11 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
                 # sql = "REPLACE INTO " + table_name + " (" + headers_str + ") VALUES (" + values_str + ");"
                 columns = ', '.join("`" + str(x).replace('/', '_') + "`" for x in dictionary.keys())
                 values_str = ', '.join("'" + str(x).replace('/', '_') + "'" for x in dictionary.values())
-                values = values_str.replace('\"None\"', "")  # replace "None" to NULL
+
+                for v in enumerate(values_str):
+                    values = tuple([None if x is None else x for x in v])
+
+                # values = values_str.replace('\"None\"', "")  # replace "None" to NULL
                 # values = values_str.replace("\'None\'", '')  # replace "None" to NULL
 
                 print(values)

@@ -1,0 +1,9 @@
+version: '3'
+services:
+  main:
+    image: 'yuinakorn/py_receiver:latest'
+    ports:
+      - '8082:8000'
+    volumes:
+      - "./:/app"
+    restart: 'unless-stopped'

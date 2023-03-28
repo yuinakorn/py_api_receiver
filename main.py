@@ -34,7 +34,6 @@ class Params(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     params = Column(String)
-    script_provider = Column(String)
 
 
 class Hcode(Base):

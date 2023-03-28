@@ -176,7 +176,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
     method = request.query_params.get("method")
-    provider_id = request.query_params.get("provider_id")
+    # provider_id = request.query_params.get("provider_id")
 
     tz = pytz.timezone('Asia/Bangkok')
     rounds = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
@@ -189,8 +189,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
     }
 
     # where script_provider = provider
-    params_data = json.loads(db.query(Params).filter(Params.name == params).filter(Params.script_provider == provider_id).first().params)
-    # params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
+    params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
     hoscode_data = json.loads(db.query(Hcode).filter(Hcode.name == hosgroup).first().hoscode)
 
     for i in params_data:

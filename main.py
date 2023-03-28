@@ -34,6 +34,7 @@ class Params(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     params = Column(String)
+    script_provider = Column(String)
 
 
 class Hcode(Base):
@@ -171,7 +172,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
 
 # api caller # ตัวเรียกข้อมูล
 @app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["receiver and caller API"])
-async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
+async def caller(request: Request, params: str, hosgroup: str, provider: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
     method = request.query_params.get("method")
@@ -186,7 +187,9 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
         "method": method
     }
 
-    params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
+    # where script_provider = provider
+    params_data = json.loads(db.query(Params).filter(Params.name == params).filter(Params.script_provider == provider).first().params)
+    # params_data = json.loads(db.query(Params).filter(Params.name == params).first().params)
     hoscode_data = json.loads(db.query(Hcode).filter(Hcode.name == hosgroup).first().hoscode)
 
     for i in params_data:

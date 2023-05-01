@@ -29,7 +29,9 @@ app = FastAPI()
 api_url = config_env["API_URL"]
 
 
-class Params(Base):from fastapi import FastAPI, Request, status, HTTPException, Depends, Body
+class Params(Base): from fastapi import FastAPI, Request, status, HTTPException, Depends, Body
+
+
 from dotenv import dotenv_values
 from sqlalchemy.orm import Session
 # from starlette.middleware.cors import CORSMiddleware
@@ -245,7 +247,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             payload = {}
             headers = {}
 
-            requests.request("GET", url, headers=headers, data=payload, verify=False)
+            requests.request("GET", url, headers=headers, data=payload)
 
             # status_code = response.status_code
             # json_arr = response.json()
@@ -374,10 +376,10 @@ async def one_call(request: Request, params: str, hosgroup: str, db: Session = D
 def get_bed(table: str, api_id: int, db: Session = Depends(get_db)):
     return receiver_controller.get_bed(table, api_id, db)
 
-    __tablename__ = "json_params"
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    params = Column(String)
+    # __tablename__ = "json_params"
+    # id = Column(Integer, primary_key=True)
+    # name = Column(String)
+    # params = Column(String)
 
 
 class Hcode(Base):

@@ -32,7 +32,7 @@ def insert_bed1(table: str, api_id: int, db: Session):
     tz = pytz.timezone('Asia/Bangkok')
     rounds = datetime.now(tz).strftime("%H")
 
-    response = requests.request("GET", url, verify=False)
+    response = requests.get(url, verify=False)
     datas = response.json()
     connection = get_connection("bed_monitor")
     i = 0

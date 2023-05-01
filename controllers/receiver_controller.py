@@ -87,7 +87,7 @@ def insert_bed2(table: str, api_id: int, db: Session):
     datetime_now = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     rounds = datetime.now(tz).strftime("%H")
 
-    response = requests.request("GET", url)
+    response = requests.get(url, verify=False)
     datas = response.json()
     connection = get_connection("bed_monitor")
     i = 0

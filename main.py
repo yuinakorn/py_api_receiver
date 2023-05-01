@@ -342,5 +342,3 @@ async def one_call(request: Request, params: str, hosgroup: str, db: Session = D
 @app.post("/api_nkp/{table}/{api_id}", status_code=status.HTTP_200_OK, tags=["NKP API"])
 def get_bed(table: str, api_id: int, db: Session = Depends(get_db)):
     return receiver_controller.get_bed(table, api_id, db)
-
-

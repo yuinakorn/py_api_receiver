@@ -3,6 +3,8 @@ from dotenv import dotenv_values
 from sqlalchemy.orm import Session
 # from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy import Column, String, Integer
+from starlette.middleware.cors import CORSMiddleware
+
 from database import get_connection, Base, SessionLocal
 # from pydantic import BaseModel
 import time
@@ -18,13 +20,13 @@ config_env = dotenv_values(".env")
 
 app = FastAPI()
 
-# app.add_middleware(
-#     CORSMiddleware,
-#     allow_origins=["*"],
-#     allow_credentials=True,
-#     allow_methods=["*"],
-#     allow_headers=["*"],
-# )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 api_url = config_env["API_URL"]
 

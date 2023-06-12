@@ -15,6 +15,7 @@ from datetime import datetime
 import pytz
 import threading
 from controllers import receiver_controller
+from cmu_dent import sent_to_cmu
 
 config_env = dotenv_values(".env")
 
@@ -81,15 +82,24 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
     # end test api r1
 
     # start catscore NCD
-    if api_name == "catscore":
-        json_data = await request.json()
-        print(json_data)
+    # if api_name == "catscore":
+    #     json_data = await request.json()
+    #     print(json_data)
+    #     # end catscore NCD
+    #
+    # elif api_name == "test":
+    #     data = await request.json()
+    #     print(data)
 
-        # end catscore NCD
+    elif api_name.startswith("cmu_dent_"):
+        try:
+            json_data = await request.json()
+        except:
+            raise HTTPException(status_code=404, detail="Error: json_data")
 
-    elif api_name == "test":
-        data = await request.json()
-        print(data)
+        return sent_to_cmu(api_name, json_data)
+        # print(api_name)
+        # return {"detail": "Success: cmu_dent_person"}
 
     else:
         json_data = await request.json()

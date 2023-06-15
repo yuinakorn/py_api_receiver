@@ -1,7 +1,7 @@
 version: '3'
 services:
   main:
-    image: 'py_api_receiver'
+    image: 'yuinakorn/py_receiver'
     ports:
       - '8081:8000'
     volumes:

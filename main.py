@@ -225,7 +225,8 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 
             print(table_name)
 
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+            # url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + (wait_result or "") + "&api=" + \
                   config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + str(rounds) + \
                   "&d1=" + d1 + "&d2=" + d2
 

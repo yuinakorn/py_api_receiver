@@ -186,9 +186,13 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
 async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list
     wait_result = request.query_params.get("wait_result")
-    d1 = request.query_params.get("d1")
-    d2 = request.query_params.get("d2")
     method = request.query_params.get("method")
+    # shorten if else
+    d1 = request.query_params.get("d1", "")
+    d2 = request.query_params.get("d2", "")
+
+    print("d1 = " + str(d1))
+    print("d2 = " + str(d2))
     # provider_id = request.query_params.get("provider_id")
     # provider_id = request.query_params.get("provider_id")
 
@@ -222,7 +226,8 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             print(table_name)
 
             url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-                  config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + str(rounds) + "&d1=" + d1 + "&d2=" + d2 \
+                  config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + str(rounds) + \
+                  "&d1=" + d1 + "&d2=" + d2
 
             print(url)
 

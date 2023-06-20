@@ -60,7 +60,7 @@ async def root():
 
 
 # on test
-@app.post("/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/test/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     print("api_name: " + api_name)
@@ -90,7 +90,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
 
 
 # api receiver # ตัวนำเข้าข้อมูล
-@app.post("/org/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1

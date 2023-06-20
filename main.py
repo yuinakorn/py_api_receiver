@@ -142,6 +142,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
             print({"detail": "Delete Success"})
 
         data = json_data["data"]
+        print(data)
 
         for item in data:
             dictionary = item

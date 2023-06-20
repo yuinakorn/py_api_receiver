@@ -59,8 +59,38 @@ async def root():
     return {"detail": "Hello"}
 
 
-# api receiver # ตัวนำเข้าข้อมูล
+# on test
 @app.post("/{api_name}", status_code=status.HTTP_200_OK,
+          tags=["receiver and caller API"])  # api_name is parameter select database
+async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
+    print("api_name: " + api_name)
+
+    json_data = await request.json()
+
+    table_name = json_data["table"]
+    items = json_data["data"]
+
+    values_list = []
+    for item in items:
+        values = tuple(item.values())
+        values_list.append(values)
+
+    placeholders = ', '.join(['%s'] * len(items[0]))
+    query = f"INSERT INTO {table_name} ({', '.join(items[0].keys())}) VALUES ({placeholders})"
+
+    print(query)
+
+    connection = get_connection(api_name)
+    with connection.cursor() as cursor:
+        cursor.executemany(query, values_list)
+        connection.commit()
+        cursor.close()
+
+        return {"message": "Items created successfully"}
+
+
+# api receiver # ตัวนำเข้าข้อมูล
+@app.post("/org/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
@@ -80,16 +110,6 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
 
         return {"message": response}
     # end test api r1
-
-    # start catscore NCD
-    # if api_name == "catscore":
-    #     json_data = await request.json()
-    #     print(json_data)
-    #     # end catscore NCD
-    #
-    # elif api_name == "test":
-    #     data = await request.json()
-    #     print(data)
 
     elif api_name.startswith("cmu_dent_"):
         try:

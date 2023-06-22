@@ -1,3 +1,4 @@
+import pymysql
 import pytz
 from datetime import datetime
 
@@ -72,18 +73,35 @@ async def insert_data(api_name, json_data):
     #     print("Error: ", e)
     #     raise HTTPException(status_code=404, detail="API Connection Not Found")
 
+    # try:
+    #     connection = get_connection(api_name)
+    #     if connection is None:
+    #         raise ValueError("Database connection not established")
+    #
+    #     with connection.cursor() as cursor:
+    #         cursor.executemany(query, values_list)
+    #         connection.commit()
+    #
+    # except Exception as e:
+    #     print("Error: ", e)
+    #     raise HTTPException(status_code=500, detail="Database Error OR API Connection Not Found")
+
     try:
         connection = get_connection(api_name)
         if connection is None:
             raise ValueError("Database connection not established")
 
         with connection.cursor() as cursor:
-            cursor.executemany(query, values_list)
-            connection.commit()
+            try:
+                cursor.executemany(query, values_list)
+                connection.commit()
+                print("Data inserted successfully.")
+            except pymysql.Error as e:
+                print("Error occurred during data insertion:", e)
 
     except Exception as e:
-        print("Error: ", e)
-        raise HTTPException(status_code=500, detail="Database Error OR API Connection Not Found")
+        print("Error:", e)
+        raise HTTPException(status_code=500, detail="Database Error or API Connection Not Found")
 
     end_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     end_times = datetime.now()

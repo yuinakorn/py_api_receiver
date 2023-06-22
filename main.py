@@ -73,12 +73,18 @@ outer_api_list = ["send_smog_r1", "send_cleft_cmu"]
 async def receiver2(api_name: str, request: Request = Body(..., max_size=200000000)):  # default max_size is 200MB.
     print(
         "start import api_name: " + api_name + "\n" + "start_time = " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"))
-
+    json_data = await request.json()
+    payload = json.dumps(json_data)
+    print("payload: " + payload)
+    # data = json_data["data"]
     if api_name in outer_api_list:
         select_api(api_name, request)
+    elif json_data["data"] is None:
+        print("data is None")
+        return {"message": "data is None"}
     else:
         print("else =====>>>>>>: ")
-        json_data = await request.json()
+
         print("json_data: " + str(json_data))
 
         # insert_data(api_name, json_data)

@@ -77,7 +77,7 @@ async def receiver2(api_name: str, request: Request = Body(..., max_size=2000000
     print("data = ", json_data["data"])
     if api_name in outer_api_list:
         select_api(api_name, request)
-    elif json_data["data"] is None:
+    elif json_data["data"] is None or json_data["data"] == [] or json_data["data"] == "":
         print("data is None")
         return {"message": "data is None"}
     else:

@@ -68,9 +68,9 @@ outer_api_list = ["send_smog_r1", "send_cleft_cmu"]
 
 
 # on test ตัวรับข้อมูล
-@app.post("/test/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
-async def receiver(api_name: str, request: Request = Body(..., max_size=200000000)):  # default max_size is 200MB.
+async def receiver2(api_name: str, request: Request = Body(..., max_size=200000000)):  # default max_size is 200MB.
     print(
         "start import api_name: " + api_name + "\n" + "start_time = " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"))
 
@@ -79,6 +79,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=20000000
     else:
         print("else =====>>>>>>: ")
         json_data = await request.json()
+        print("json_data: " + str(json_data))
 
         # insert_data(api_name, json_data)
         asyncio.create_task(insert_data(api_name, json_data))
@@ -90,7 +91,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=20000000
 
 
 # api receiver # ตัวนำเข้าข้อมูล
-@app.post("/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/org/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1
@@ -261,8 +262,6 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
             # status_code = response.status_code
             # json_arr = response.json()
             # print(json_arr)
-
-        # time.sleep(3)  # delay 3 seconds
 
     return {"detail": f"Call API {config_api['api_name']} Success"}
 

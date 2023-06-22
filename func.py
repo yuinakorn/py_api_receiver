@@ -71,7 +71,7 @@ async def insert_data(api_name, json_data):
 
     end_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     end_times = datetime.now()
-    time_difference = (end_times - start_times).total_seconds()
+    time_difference = round((end_times - start_times).total_seconds(), 2)
 
     logs = {
         "hcode": json_data["hcode"],
@@ -81,7 +81,7 @@ async def insert_data(api_name, json_data):
         "rows": i,
         "start": start_time,
         "end": end_time,
-        "process_time": time_difference,
+        "process_time": time_difference
     }
     print("end_time = ", end_time)
     write_log(logs)

@@ -59,15 +59,28 @@ async def insert_data(api_name, json_data):
 
     print("rows = ", i)
 
+    # try:
+    #     connection = get_connection(api_name)
+    #     with connection.cursor() as cursor:
+    #         cursor.executemany(query, values_list)
+    #         connection.commit()
+    #         cursor.close()
+    # except Exception as e:
+    #     print("Error: ", e)
+    #     raise HTTPException(status_code=404, detail="API Connection Not Found")
+
     try:
         connection = get_connection(api_name)
+        if connection is None:
+            raise ValueError("Database connection not established")
+
         with connection.cursor() as cursor:
             cursor.executemany(query, values_list)
             connection.commit()
-            cursor.close()
+
     except Exception as e:
         print("Error: ", e)
-        raise HTTPException(status_code=404, detail="API Connection Not Found")
+        raise HTTPException(status_code=500, detail="Database Error OR API Connection Not Found")
 
     end_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     end_times = datetime.now()

@@ -118,7 +118,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         except:
             raise HTTPException(status_code=404, detail="Error: json_data")
 
-        return sent_to_cmu(api_name, json_data)
+        return sent_to_cmu(api_name)
         # print(api_name)
         # return {"detail": "Success: cmu_dent_person"}
 

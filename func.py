@@ -39,6 +39,8 @@ async def insert_data(api_name, json_data):
     table_name = json_data["table"]
     items = json_data["data"]
 
+    print("json_data = ", json_data)
+
     columns = ', '.join(items[0].keys())
     print(columns)
 

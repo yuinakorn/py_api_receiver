@@ -89,11 +89,11 @@ async def root():
     return {"detail": "Hello"}
 
 
-# api receiver # ตัวนำเข้าข้อมูล
+# controller receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
-    # test api r1
+    # test controller r1
     print("api_name: " + api_name)
     if api_name == "send_smog_r1":
         url = config_env["SMOG_R1_URL"]
@@ -109,7 +109,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         response = requests.request("POST", url, headers=headers, data=payload)
 
         return {"message": response}
-    # end test api r1
+    # end test controller r1
 
     # start catscore NCD
     if api_name == "catscore":
@@ -202,7 +202,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         return {"detail": "Insert " + str(i) + " rows into " + hoscode + " success"}
 
 
-# api caller # ตัวเรียกข้อมูล
+# controller caller # ตัวเรียกข้อมูล
 @app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["receiver and caller API"])
 async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list
@@ -239,7 +239,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 
             print(table_name)
 
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&controller=" + \
                   config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + str(rounds)
 
             print(url)
@@ -349,7 +349,7 @@ async def one_call(request: Request, params: str, hosgroup: str, db: Session = D
 
             print(table_name)
 
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&controller=" + \
                   config_api["api_name"] + "&method=" + config_api["method"]
 
             print(url)
@@ -402,11 +402,11 @@ async def root():
     return {"detail": "Hello"}
 
 
-# api receiver # ตัวนำเข้าข้อมูล
+# controller receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
-    # test api r1
+    # test controller r1
     print("api_name: " + api_name)
     if api_name == "send_smog_r1":
         url = config_env["SMOG_R1_URL"]
@@ -422,7 +422,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         response = requests.request("POST", url, headers=headers, data=payload)
 
         return {"message": response}
-    # end test api r1
+    # end test controller r1
 
     # start catscore NCD
     if api_name == "catscore":
@@ -515,7 +515,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         return {"detail": "Insert " + str(i) + " rows into " + hoscode + " success"}
 
 
-# api caller # ตัวเรียกข้อมูล
+# controller caller # ตัวเรียกข้อมูล
 @app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["receiver and caller API"])
 async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list
@@ -552,7 +552,7 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 
             print(table_name)
 
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&controller=" + \
                   config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + str(rounds)
 
             print(url)
@@ -662,7 +662,7 @@ async def one_call(request: Request, params: str, hosgroup: str, db: Session = D
 
             print(table_name)
 
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&controller=" + \
                   config_api["api_name"] + "&method=" + config_api["method"]
 
             print(url)

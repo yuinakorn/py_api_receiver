@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import FastAPI, Request, status, HTTPException, Depends, Body
 from dotenv import dotenv_values
 from sqlalchemy.orm import Session
@@ -15,7 +17,10 @@ from datetime import datetime
 import pytz
 import threading
 from controllers import receiver_controller
-from cmu_dent import sent_to_cmu
+from controllers.sent_outer_controller import select_api, sent_to_cmu
+from func import insert_data
+
+tz = pytz.timezone('Asia/Bangkok')
 
 config_env = dotenv_values(".env")
 
@@ -59,43 +64,38 @@ async def root():
     return {"detail": "Hello"}
 
 
-# on test
+outer_api_list = ["send_smog_r1", "send_cleft_cmu"]
+
+
+# on test ตัวรับข้อมูล
 @app.post("/test/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
-async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
-    print("api_name: " + api_name)
+async def receiver(api_name: str, request: Request = Body(..., max_size=200000000)):  # default max_size is 200MB.
+    print(
+        "start import api_name: " + api_name + "\n" + "start_time = " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"))
 
-    json_data = await request.json()
+    if api_name in outer_api_list:
+        select_api(api_name, request)
+    else:
+        json_data = await request.json()
 
-    table_name = json_data["table"]
-    items = json_data["data"]
+        # insert_data(api_name, json_data)
+        asyncio.create_task(insert_data(api_name, json_data))
 
-    values_list = []
-    for item in items:
-        values = tuple(item.values())
-        values_list.append(values)
-
-    placeholders = ', '.join(['%s'] * len(items[0]))
-    query = f"INSERT INTO {table_name} ({', '.join(items[0].keys())}) VALUES ({placeholders})"
-
-    print(query)
-
-    connection = get_connection(api_name)
-    with connection.cursor() as cursor:
-        cursor.executemany(query, values_list)
-        connection.commit()
-        cursor.close()
-
-        return {"message": "Items created successfully"}
+        return {
+            "message": "import data in progress at " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"),
+            "detail": "please check in database"
+        }
 
 
-# api receiver # ตัวนำเข้าข้อมูล
+# controller receiver # ตัวนำเข้าข้อมูล
 @app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
-    # test api r1
+    # test controller r1
     print("api_name: " + api_name)
     if api_name == "send_smog_r1":
+
         url = config_env["SMOG_R1_URL"]
 
         json_data = await request.json()
@@ -109,7 +109,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         response = requests.request("POST", url, headers=headers, data=payload)
 
         return {"message": response}
-    # end test api r1
+    # end test controller r1
 
     elif api_name.startswith("cmu_dent_"):
         try:
@@ -202,7 +202,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
         return {"detail": "Insert " + str(i) + " rows into " + hoscode + " success"}
 
 
-# api caller # ตัวเรียกข้อมูล
+# controller caller # ตัวเรียกข้อมูล
 @app.post("/callapi/{params}/{hosgroup}", status_code=status.HTTP_200_OK, tags=["receiver and caller API"])
 async def caller(request: Request, params: str, hosgroup: str, db: Session = Depends(get_db)):
     global hoscode_list, table_name, params_list
@@ -246,8 +246,8 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 
             print(table_name)
 
-            # url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + (wait_result or "") + "&api=" + \
+            # url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&controller=" + \
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + (wait_result or "") + "&controller=" + \
                   config_api["api_name"] + "&method=" + config_api["method"] + "&rounds=" + str(rounds) + \
                   "&d1=" + d1 + "&d2=" + d2
 
@@ -357,7 +357,7 @@ async def one_call(request: Request, params: str, hosgroup: str, db: Session = D
 
             print(table_name)
 
-            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&api=" + \
+            url = api_url + "/" + table_name + "/" + hoscode + "?wait_result=" + wait_result + "&controller=" + \
                   config_api["api_name"] + "&method=" + config_api["method"]
 
             print(url)

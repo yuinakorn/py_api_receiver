@@ -91,7 +91,7 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=20000000
 # controller receiver # ตัวนำเข้าข้อมูล
 @app.post("/org/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
-async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
+async def receiver_org(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test controller r1
     print("api_name: " + api_name)
     if api_name == "send_smog_r1":

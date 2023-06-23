@@ -68,7 +68,7 @@ outer_api_list = ["send_smog_r1", "send_cleft_cmu"]
 
 
 # ตัวนำเข้าข้อมูล ใหม่
-@app.post("/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/test/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver2(api_name: str, request: Request = Body(..., max_size=200000000)):  # default max_size is 200MB.
     print(
@@ -94,7 +94,7 @@ async def receiver2(api_name: str, request: Request = Body(..., max_size=2000000
 
 
 # api receiver # ตัวนำเข้าข้อมูล
-@app.post("/org/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1

@@ -19,6 +19,7 @@ import threading
 from controllers import receiver_controller
 from controllers.sent_outer_controller import select_api, sent_to_cmu
 from func import insert_data
+from pydantic import BaseModel
 
 tz = pytz.timezone('Asia/Bangkok')
 
@@ -59,6 +60,14 @@ def get_db():
         db.close()
 
 
+class RequestPayload(BaseModel):
+    table_name: str
+    hcode: str
+    method: str
+    table: str
+    data: list
+
+
 @app.get("/")
 async def root():
     return {"detail": "Hello"}
@@ -70,7 +79,7 @@ outer_api_list = ["send_smog_r1", "send_cleft_cmu"]
 # ตัวนำเข้าข้อมูล ใหม่
 @app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
-async def receiver2(api_name: str, request: Request = Body(..., max_size=200000000)):  # default max_size is 200MB.
+async def receiver2(api_name: str,  request: Request, payload: RequestPayload = Body(..., max_size=200000000)):  # default max_size is 200MB.
     print(
         "start import api_name: " + api_name + "\n" + "start_time = " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"))
     json_data = await request.json()

@@ -61,7 +61,6 @@ def get_db():
 
 
 class RequestPayload(BaseModel):
-    table_name: str
     hcode: str
     method: str
     table: str

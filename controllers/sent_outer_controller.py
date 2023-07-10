@@ -23,8 +23,8 @@ app = FastAPI()
 def select_api(api_name, request):
     if api_name == 'send_smog_r1':
         send_smog_r1(request)
-    elif api_name == 'sent_to_cmu':
-        sent_to_cmu(request)
+    elif api_name == 'send_cleft_cmu':
+        send_cleft_cmu(request)
 
 
 async def send_smog_r1(request):
@@ -41,7 +41,7 @@ async def send_smog_r1(request):
     requests.request("POST", url, headers=headers, data=payload)
 
 
-async def sent_to_cmu(request):
+async def send_cleft_cmu(request):
     print("inside function: sent_to_cmu")
     url = config_env["CMU_DENT_URL"]
     print(url)

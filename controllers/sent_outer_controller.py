@@ -46,14 +46,15 @@ async def sent_to_cmu(request):
     url = config_env["CMU_DENT_URL"]
     print(url)
     json_data = await request.json()
-    data = {"data": json_data}
+    # data = {"data": json_data}
+    # payload = json.dumps(data)
 
-    payload = json.dumps(data)
+    payload = json.dumps(json_data)
     headers = {
         'Content-Type': 'application/json'
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
-    print(data)
+    # print(data)
 
     return response

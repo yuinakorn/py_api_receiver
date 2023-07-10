@@ -55,6 +55,6 @@ async def sent_to_cmu(request):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
-    # print(data)
+    print(payload)
 
     return response

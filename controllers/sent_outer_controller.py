@@ -24,6 +24,7 @@ def select_api(api_name, request):
     if api_name == 'send_smog_r1':
         send_smog_r1(request)
     elif api_name == 'send_cleft_cmu':
+        print("inside select_api send_cleft_cmu")
         sent_to_cmu(request)
 
 

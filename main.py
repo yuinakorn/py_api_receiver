@@ -85,6 +85,7 @@ async def receiver2(api_name: str,  request: Request, payload: RequestPayload = 
     json_data = await request.json()
     # print("data = ", json_data["data"])
     if api_name in outer_api_list:
+        print("if statement api_name: " + api_name)
         select_api(api_name, request)
     elif json_data["data"] is None or json_data["data"] == [] or json_data["data"] == "":
         print("data is None")

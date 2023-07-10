@@ -42,11 +42,11 @@ async def send_smog_r1(request):
     requests.request("POST", url, headers=headers, data=payload)
 
 
-async def sent_to_cmu(request):
+def sent_to_cmu(request):
     print("inside function: sent_to_cmu")
     url = config_env["CMU_DENT_URL"]
     print(url)
-    json_data = await request.json()
+    json_data = request.json()
     # data = {"data": json_data}
     # payload = json.dumps(data)
 

@@ -53,9 +53,10 @@ def sent_to_cmu(request):
     return response
 
 
-def select_api(api_name, request):
+def select_api(api_name: str, request: Request):
     if api_name == 'send_smog_r1':
         send_smog_r1(request)
     elif api_name == 'send_cleft_cmu':
-        print("inside select_api send_cleft_cmu")
+        print(f"inside select_api {api_name}")
+        print("request = ", request)
         sent_to_cmu(request)

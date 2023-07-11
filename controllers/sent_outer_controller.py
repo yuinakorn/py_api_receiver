@@ -5,7 +5,7 @@ from dotenv import dotenv_values
 
 # from starlette.middleware.cors import CORSMiddleware
 
-config_env = dotenv_values("../.env")
+config_env = dotenv_values(".env")
 
 app = FastAPI()
 
@@ -19,6 +19,17 @@ app = FastAPI()
 # )
 
 # api_url = config_env["API_URL"]
+
+def select_api(api_name: str, json_data):
+    if api_name == 'send_smog_r1':
+        send_smog_r1(json_data)
+    elif api_name == 'send_cleft_cmu':
+        print(f"inside select_api {api_name}")
+        print("request json = ", json_data)
+        sent_to_cmu(json_data)
+    else:
+        print("API not found")
+
 
 def send_smog_r1(json_data):
     url = config_env["SMOG_R1_URL"]
@@ -53,10 +64,3 @@ def sent_to_cmu(json_data):
     return response
 
 
-def select_api(api_name: str, json_data):
-    if api_name == 'send_smog_r1':
-        send_smog_r1(json_data)
-    elif api_name == 'send_cleft_cmu':
-        print(f"inside select_api {api_name}")
-        print("request json = ", json_data)
-        sent_to_cmu(json_data)

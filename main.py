@@ -85,6 +85,7 @@ async def receiver2(api_name: str, request: Request):
         "start import api_name: " + api_name + "\n" + "start_time = " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"))
     json_data = await request.json()
     print("data = ", json_data["data"])
+
     if api_name in outer_api_list:
         print("if statement api_name: " + api_name)
         select_api(api_name, json_data)

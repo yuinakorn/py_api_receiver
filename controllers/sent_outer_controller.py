@@ -20,10 +20,10 @@ app = FastAPI()
 
 # api_url = config_env["API_URL"]
 
-def send_smog_r1(request):
+def send_smog_r1(json_data):
     url = config_env["SMOG_R1_URL"]
 
-    json_data = request.json()
+    # json_data = request.json()
     print(url)
     # print(json_data)
 
@@ -34,11 +34,11 @@ def send_smog_r1(request):
     requests.request("POST", url, headers=headers, data=payload)
 
 
-def sent_to_cmu(request):
+def sent_to_cmu(json_data):
     print("inside function: sent_to_cmu")
     url = config_env["CMU_DENT_URL"]
     print(url)
-    json_data = request.json()
+    # json_data = request.json()
     # data = {"data": json_data}
     # payload = json.dumps(data)
 
@@ -48,14 +48,14 @@ def sent_to_cmu(request):
     }
 
     response = requests.request("POST", url, headers=headers, data=payload)
-    print(payload)
+    print("payload = ", payload)
 
     return response
 
 
-def select_api(api_name: str, request: Request):
+def select_api(api_name: str, json_data):
     if api_name == 'send_smog_r1':
-        send_smog_r1(request)
+        send_smog_r1(json_data)
     elif api_name == 'send_cleft_cmu':
         print(f"inside select_api {api_name}")
         print("request json = ", request.json())

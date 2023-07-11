@@ -36,7 +36,7 @@ def send_smog_r1(json_data):
 
 def sent_to_cmu(json_data):
     print("inside function: sent_to_cmu")
-    url = "https://ppho.thaicleftlink.org/receive"
+    url = config_env["CMU_DENT_URL"]
     print(url)
     # json_data = request.json()
     # data = {"data": json_data}

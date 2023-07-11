@@ -58,6 +58,5 @@ def select_api(api_name: str, json_data):
         send_smog_r1(json_data)
     elif api_name == 'send_cleft_cmu':
         print(f"inside select_api {api_name}")
-        print("request json = ", request.json())
-        print("request = ", request.json())
-        sent_to_cmu(request)
+        print("request json = ", json_data)
+        sent_to_cmu(json_data)

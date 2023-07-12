@@ -21,14 +21,29 @@ app = FastAPI()
 # api_url = config_env["API_URL"]
 
 def select_api(api_name: str, json_data):
-    if api_name == 'send_smog_r1':
-        send_smog_r1(json_data)
-    elif api_name == 'send_cleft_cmu':
-        print(f"inside select_api {api_name}")
-        print("request json = ", json_data)
-        sent_to_cmu(json_data)
-    else:
-        print("API not found")
+    upper_api_name = api_name.upper()
+    api_url = config_env[upper_api_name]
+    print("api_name = ", upper_api_name)
+    print("api_url = ", api_url)
+
+    payload = json.dumps(json_data)
+    headers = {
+        'Content-Type': 'application/json'
+    }
+
+    response = requests.request("POST", api_url, headers=headers, data=payload)
+    print("payload = ", payload)
+
+    return response
+
+    # if api_name == 'send_smog_r1':
+    #     send_smog_r1(json_data)
+    # elif api_name == 'send_cleft_cmu':
+    #     print(f"inside select_api {api_name}")
+    #     print("request json = ", json_data)
+    #     sent_to_cmu(json_data)
+    # else:
+    #     print("API not found")
 
 
 def send_smog_r1(json_data):
@@ -42,7 +57,9 @@ def send_smog_r1(json_data):
     headers = {
         'Content-Type': 'application/json'
     }
-    requests.request("POST", url, headers=headers, data=payload)
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print("payload = ", payload)
+    return response
 
 
 def sent_to_cmu(json_data):
@@ -62,5 +79,3 @@ def sent_to_cmu(json_data):
     print("payload = ", payload)
 
     return response
-
-

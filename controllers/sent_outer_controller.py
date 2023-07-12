@@ -26,7 +26,7 @@ def select_api(api_name: str, json_data):
 
     print("api_name = ", upper_api_name)
 
-    api_url = config_env.get(upper_api_name)
+    api_url = config_env["SEND_SMOG_R1"]
     print("api_url = ", api_url)
 
     payload = json.dumps(json_data)

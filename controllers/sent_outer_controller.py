@@ -22,7 +22,7 @@ app = FastAPI()
 
 def select_api(api_name: str, json_data):
     upper_api_name = api_name.upper()
-    api_url = config_env[upper_api_name]
+    api_url = config_env[f"{upper_api_name}"]
     print("api_name = ", upper_api_name)
     print("api_url = ", api_url)
 

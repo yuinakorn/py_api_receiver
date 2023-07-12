@@ -79,7 +79,7 @@ async def root():
 @app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 # async def receiver2(api_name: str, request: Request, payload: RequestPayload = Body(..., max_size=200000000)):  # default max_size is 200MB.
-async def receiver2(api_name: str, request: Request):
+async def receiver2(api_name: str, request: Request = Body(..., max_size=200000000)):
     outer_api_list = ["send_smog_r1", "send_cleft_cmu"]
     print(
         "start import api_name: " + api_name + "\n" + "start_time = " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"))

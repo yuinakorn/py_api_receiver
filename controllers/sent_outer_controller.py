@@ -21,9 +21,12 @@ app = FastAPI()
 # api_url = config_env["API_URL"]
 
 def select_api(api_name: str, json_data):
+    print("inside select_api")
     upper_api_name = api_name.upper()
-    api_url = config_env[f"{upper_api_name}"]
+
     print("api_name = ", upper_api_name)
+
+    api_url = config_env[upper_api_name]
     print("api_url = ", api_url)
 
     payload = json.dumps(json_data)

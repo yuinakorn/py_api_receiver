@@ -113,7 +113,8 @@ async def receiver(api_name: str, request: Request = Body(..., max_size=10000000
     print("api_name: " + api_name)
     if api_name == "send_smog_r1":
 
-        url = config_env["SMOG_R1_URL"]
+        # url = config_env["SMOG_R1_URL"]
+        url = config_env["SEND_SMOG_R1"]
 
         json_data = await request.json()
         print(url)

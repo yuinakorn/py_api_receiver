@@ -60,14 +60,13 @@ async def insert_data(api_name: str, json_data: dict):
     print("rows = ", i)
 
     try:
-        connection = get_connection(api_name)
+        connection = await get_connection(api_name)
         if connection is None:
             raise ValueError("Database connection not established")
 
         with connection.cursor() as cursor:
             try:
-                cursor.executemany(query, values_list)
-                # add await
+                await cursor.executemany(query, values_list)
                 await connection.commit()
                 print("Data inserted successfully.")
             except pymysql.Error as e:

@@ -84,7 +84,7 @@ async def receiver2(api_name: str, request: Request = Body(..., max_size=2000000
     print(
         "start import api_name: " + api_name + "\n" + "start_time = " + datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S"))
     json_data = await request.json()
-    print("data = ", json_data["data"])
+    print("json_data = ", str(json_data))
 
     if api_name in outer_api_list:
         print("if statement api_name: " + api_name)
@@ -95,7 +95,7 @@ async def receiver2(api_name: str, request: Request = Body(..., max_size=2000000
     else:
         print("else =====>>>>>>: ")
 
-        print("json_data: " + str(json_data))
+        # print("json_data: " + str(json_data))
 
         asyncio.create_task(insert_data(api_name, json_data))
 

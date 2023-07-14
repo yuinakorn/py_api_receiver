@@ -32,9 +32,9 @@ def select_api(api_name: str, json_data):
     # elif upper_api_name == 'SEND_CLEFT_CMU':
     #     api_url = config_env["SEND_CLEFT_CMU"]
 
-    api_url = config_env["SEND_CLEFT_CMU"]
+    # api_url = config_env["SEND_CLEFT_CMU"]
 
-    # api_url = config_env[str(upper_api_name)]
+    api_url = config_env[str(upper_api_name)]
     print("api_url = ", api_url)
 
     payload = json.dumps(json_data)

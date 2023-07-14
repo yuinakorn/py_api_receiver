@@ -21,13 +21,18 @@ app = FastAPI()
 # api_url = config_env["API_URL"]
 
 def select_api(api_name: str, json_data):
+    api_url = None
     print("inside select_api")
     upper_api_name = api_name.upper()
 
     print("api_name = ", upper_api_name)
 
-    # api_url = config_env["SEND_SMOG_R1"]
-    api_url = config_env[str(upper_api_name)]
+    if upper_api_name == 'SEND_SMOG_R1':
+        api_url = config_env["SEND_SMOG_R1"]
+    elif upper_api_name == 'SEND_CLEFT_CMU':
+        api_url = config_env["SEND_CLEFT_CMU"]
+
+    # api_url = config_env[str(upper_api_name)]
     print("api_url = ", api_url)
 
     payload = json.dumps(json_data)

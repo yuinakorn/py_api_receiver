@@ -31,7 +31,7 @@ def get_db():
 tz = pytz.timezone('Asia/Bangkok')
 
 
-async def insert_data(api_name, json_data):
+async def insert_data(api_name: str, json_data):
     print("inside func insert_data")
     start_time = datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")
     start_times = datetime.now()

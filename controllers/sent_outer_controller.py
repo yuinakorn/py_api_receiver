@@ -21,7 +21,7 @@ app = FastAPI()
 # api_url = config_env["API_URL"]
 
 def select_api(api_name: str, json_data):
-    api_url = None
+    global api_url
     print("inside select_api")
     upper_api_name = api_name.upper()
 

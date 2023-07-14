@@ -67,7 +67,8 @@ async def insert_data(api_name: str, json_data: dict):
         with connection.cursor() as cursor:
             try:
                 cursor.executemany(query, values_list)
-                connection.commit()
+                # add await
+                await connection.commit()
                 print("Data inserted successfully.")
             except pymysql.Error as e:
                 print("Error occurred during data insertion:", e)

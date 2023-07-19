@@ -45,9 +45,9 @@ def select_api(api_name: str, json_data):
     response = requests.request("POST", api_url, headers=headers, data=payload)
     print("payload = ", payload)
 
-    print("response = ", response)
+    print("response = ", response.text)
 
-    return {"message": response}
+    return {"message": response.text}
 
     # if api_name == 'send_smog_r1':
     #     send_smog_r1(json_data)

@@ -76,7 +76,7 @@ async def root():
 
 
 # ตัวนำเข้าข้อมูล ใหม่
-@app.post("/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/xxxx/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 # async def receiver2(api_name: str, request: Request, payload: RequestPayload = Body(..., max_size=200000000)):  # default max_size is 200MB.
 async def receiver2(api_name: str, request: Request = Body(..., max_size=200000000)):
@@ -107,7 +107,7 @@ async def receiver2(api_name: str, request: Request = Body(..., max_size=2000000
 
 
 # api receiver # ตัวนำเข้าข้อมูล เก่าไม่ใช้แล้ว / แจ้ง error ราย reccord ที่ไม่สำเร็จ
-@app.post("/old/{api_name}", status_code=status.HTTP_200_OK,
+@app.post("/{api_name}", status_code=status.HTTP_200_OK,
           tags=["receiver and caller API"])  # api_name is parameter select database
 async def receiver(api_name: str, request: Request = Body(..., max_size=100000000)):  # default max_size is 100MB.
     # test api r1

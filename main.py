@@ -292,6 +292,7 @@ async def telelog(request: Request, jwt_str: str, ip: str):
         username = "'" + str(jwt_decode["username"]) + "'"
     else:
         username = "''"
+
     # username = "'" + jwt_decode["username"] + "'"
     doctor_cid = "'" + str(jwt_decode["cid"]) + "'"
     patient_cid = "'" + str(jwt_decode["patientCid"]) + "'"

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 # from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy import Column, String, Integer
 from starlette.middleware.cors import CORSMiddleware
+from starlette.responses import Response
 
 from database import get_connection, Base, SessionLocal
 # from pydantic import BaseModel
@@ -20,6 +21,7 @@ from controllers import receiver_controller
 from controllers.sent_outer_controller import select_api, sent_to_cmu
 from func import insert_data
 from pydantic import BaseModel
+import jsonpickle
 
 tz = pytz.timezone('Asia/Bangkok')
 
@@ -285,44 +287,51 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 
 @app.post("/telelog/", status_code=status.HTTP_200_OK, tags=["tele-medicine log"])
 async def telelog(request: Request, jwt_str: str, ip: str):
-    jwt_decode = jwt.decode(jwt_str, config_env["JWT_SECRET"], algorithms=["HS256"])
-    hoscode = "'" + str(jwt_decode["hosCode"]) + "'"
-
-    if "username" in jwt_decode and jwt_decode["username"] is not None:
-        username = "'" + str(jwt_decode["username"]) + "'"
-    else:
-        username = "''"
-
-    # username = "'" + jwt_decode["username"] + "'"
-    doctor_cid = "'" + str(jwt_decode["cid"]) + "'"
-    patient_cid = "'" + str(jwt_decode["patientCid"]) + "'"
-    now = datetime.now()
-    date_time = now.strftime("%Y-%m-%d %H:%M:%S")
-    date_time = "'" + str(date_time) + "'"
-    ip_client = "'" + str(ip) + "'"
-    connection = get_connection('telelog')
+    # if jwt is expired, it will raise jwt.ExpiredSignatureError, and save jwt data to database
 
     try:
-        with connection.cursor() as cursor:
-            sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele, client_ip) VALUES " \
-                  "(%s, %s, %s, %s, CONCAT(CURRENT_DATE,' ',CURRENT_TIME), %s)" % (
-                      hoscode, username, doctor_cid, patient_cid, ip_client)
-            print(sql)
-            cursor.execute(sql)
-            connection.commit()  # commit the changes
-        return {
-            "status": "ok",
-            "detail": f"Insert tele-log success {now}",
-            "client ip": ip
-        }
+        jwt_decode = jwt.decode(jwt_str, config_env["JWT_SECRET"], algorithms=["HS256"], options={"verify_exp": False})
+        hoscode = "'" + str(jwt_decode["hosCode"]) + "'"
 
-    except Exception as e:
-        print(f'This is error: {e}')
-        return {
-            "status": "fail",
-            "detail": str(e),
-            "client ip": ip
-        }
+        if "username" in jwt_decode and jwt_decode["username"] is not None:
+            username = "'" + str(jwt_decode["username"]) + "'"
+        else:
+            username = "''"
+
+        # username = "'" + jwt_decode["username"] + "'"
+        doctor_cid = "'" + str(jwt_decode["cid"]) + "'"
+        patient_cid = "'" + str(jwt_decode["patientCid"]) + "'"
+        now = datetime.now()
+        date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        date_time = "'" + str(date_time) + "'"
+        ip_client = "'" + str(ip) + "'"
+        connection = get_connection('telelog')
+
+        try:
+            with connection.cursor() as cursor:
+                sql = "INSERT INTO tele_log (hoscode, username, doctor_cid, patient_cid, start_tele, client_ip) VALUES " \
+                      "(%s, %s, %s, %s, CONCAT(CURRENT_DATE,' ',CURRENT_TIME), %s)" % (
+                          hoscode, username, doctor_cid, patient_cid, ip_client)
+                print(sql)
+                cursor.execute(sql)
+                connection.commit()  # commit the changes
+            return {
+                "status": "ok",
+                "detail": f"Insert tele-log success {now}",
+                "client ip": ip
+            }
+
+        except Exception as e:
+            print(f'This is error: {e}')
+            return {
+                "status": "fail",
+                "detail": str(e),
+                "client ip": ip
+            }
+    except jwt.ExpiredSignatureError:
+        print("jwt.ExpiredSignatureError")
+        return Response(content=jsonpickle.encode({"detail": f"jwt.ExpiredSignatureError"}), status_code=401,
+                        media_type="application/json")
 
 
 @app.post("/client/status/", status_code=status.HTTP_200_OK, tags=["client status"])

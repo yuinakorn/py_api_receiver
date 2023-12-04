@@ -59,6 +59,7 @@ def select_api(api_name: str, json_data):
     #     print("API not found")
 
 
+# ไม่ได้ใช้แล้ว
 def send_smog_r1(json_data):
     url = config_env["SMOG_R1_URL"]
 
@@ -75,6 +76,7 @@ def send_smog_r1(json_data):
     return response
 
 
+# ไม่ได้ใช้แล้ว
 def sent_to_cmu(json_data):
     print("inside function: sent_to_cmu")
     url = config_env["CMU_DENT_URL"]

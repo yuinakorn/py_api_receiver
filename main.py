@@ -287,7 +287,12 @@ async def caller(request: Request, params: str, hosgroup: str, db: Session = Dep
 async def telelog(request: Request, jwt_str: str, ip: str):
     jwt_decode = jwt.decode(jwt_str, config_env["JWT_SECRET"], algorithms=["HS256"])
     hoscode = "'" + str(jwt_decode["hosCode"]) + "'"
-    username = "'" + jwt_decode["username"] + "'"
+
+    if "username" in jwt_decode and jwt_decode["username"] is not None:
+        username = "'" + str(jwt_decode["username"]) + "'"
+    else:
+        username = "''"
+    # username = "'" + jwt_decode["username"] + "'"
     doctor_cid = "'" + str(jwt_decode["cid"]) + "'"
     patient_cid = "'" + str(jwt_decode["patientCid"]) + "'"
     now = datetime.now()

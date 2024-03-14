@@ -2,8 +2,13 @@
 .idea
 .vscode
 test_main.py
-test*.py
+*test*
 database.py
 log.txt
 __pycache__/
 env
+files_upload
+*.ini
+*.log
+*.json
+*.ipynb

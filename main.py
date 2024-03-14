@@ -18,7 +18,7 @@ from datetime import datetime
 import pytz
 import threading
 from controllers import receiver_controller
-from controllers.sent_outer_controller import select_api, sent_to_cmu
+from controllers.sent_outer_controller import select_api, sent_to_cmu, send_cmdac
 from func import insert_data
 from pydantic import BaseModel
 import jsonpickle
@@ -88,15 +88,25 @@ async def receiver2(api_name: str, request: Request = Body(..., max_size=2000000
     json_data = await request.json()
     print("json_data = ", str(json_data))
 
+    # ถ้าเป็น api ที่ส่งต่อข้อมูลไปยังระบบอื่น
     if api_name in outer_api_list:
         print("if statement api_name: " + api_name)
         response = select_api(api_name, json_data)
         return response
+
+    elif api_name.startswith("cmdac"):
+        print("else if statement api_name: " + api_name)
+        response = send_cmdac(api_name, json_data)
+        return response
+
+    # ถ้าเป็น api ที่ไม่มีข้อมูลส่งมา จะไม่นำเข้าข้อมูลเข้าฐานข้อมูล
     elif json_data["data"] is None or json_data["data"] == [] or json_data["data"] == "":
         print("data is None")
         return {"message": "data is None"}
+
+    # ถ้าเป็น api ที่มีข้อมูลส่งมา จะนำเข้าข้อมูลเข้าฐานข้อมูล ตามเงื่อนไขที่ถูกกำหนด
     else:
-        print("else =====>>>>>>: ")
+        print("else =====>>>>>> insert to database : ")
 
         # print("json_data: " + str(json_data))
 

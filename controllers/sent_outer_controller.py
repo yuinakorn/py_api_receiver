@@ -24,8 +24,9 @@ app = FastAPI()
 
 def send_cmdac(api_name: str, json_data):
     # ตรวจสอบไฟล์ที่จะสร้าง และลบไฟล์เก่าออก
-    file_path_name = f"./files_upload/{api_name}.json"
-    file_name = f"{api_name}.json"
+    hcode = json_data["hcode"]
+    file_name = f"{api_name}_{hcode}.json"
+    file_path_name = f"./files_upload/{file_name}"
 
     # delete file if exists
     if os.path.exists(file_path_name):
